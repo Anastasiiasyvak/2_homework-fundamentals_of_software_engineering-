@@ -1,10 +1,15 @@
 import requests # доступ до нашого API
 from datetime import datetime, timedelta
+import pytz
+
+
 
 def last_seen_task(last_seen):
-    now = datetime.now()  # поточний час
+    now = datetime.now(timezone)  # поточний час
     last_seen = last_seen.split(".")[0]
     last_time_online = datetime.fromisoformat(last_seen)
+    last_time_online = last_time_online.replace(tzinfo=pytz.UTC)
+    last_time_online = last_time_online.astimezone(timezone)
     time = now - last_time_online
 
     if time < timedelta(seconds=30):
@@ -25,6 +30,7 @@ def last_seen_task(last_seen):
         return "long time ago"
 
 offset = 0
+timezone = pytz.timezone("Europe/Kyiv")
 
 url = f'https://sef.podkolzin.consulting/api/users/lastSeen?offset={offset}'
 
@@ -39,7 +45,7 @@ if response.status_code == 200:
             username = user.get('nickname', 'unknown user')
             last_seen = user.get('lastSeenDate', None)
             if last_seen:
-                time_of_visit = format_last_seen(last_seen)
+                time_of_visit = last_seen_task(last_seen)
                 print(f"{username} was online {time_of_visit}")
             else:
                 print(f"{username} is online now")
