@@ -2,10 +2,8 @@ import requests
 from datetime import datetime, timedelta
 import pytz
 
-
-
 def last_seen_task(last_seen):
-    now = datetime.now(timezone)  
+    now = datetime.now(timezone)  # поточний час
     last_seen = last_seen.split(".")[0]
     last_time_online = datetime.fromisoformat(last_seen)
     last_time_online = last_time_online.replace(tzinfo=pytz.UTC)
