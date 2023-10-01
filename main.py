@@ -58,5 +58,9 @@ def get_user_data():
         print(f"Unable to retrieve data. Status code: {response.status_code}")
 
 
-if __name__ == '__main__':
+def main():
     get_user_data()
+
+
+if __name__ == '__main__':
+    main()
