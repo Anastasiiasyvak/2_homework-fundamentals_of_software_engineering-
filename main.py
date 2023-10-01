@@ -4,8 +4,11 @@ import pytz
 import unittest
 
 
+timezone = pytz.timezone("Europe/Kyiv")
+
+
 def last_seen_task(last_seen):
-    now = datetime.now(timezone)  # поточний час
+    now = datetime.now(timezone)
     last_seen = last_seen.split(".")[0]
     last_time_online = datetime.fromisoformat(last_seen)
     last_time_online = last_time_online.replace(tzinfo=pytz.UTC)
@@ -29,34 +32,37 @@ def last_seen_task(last_seen):
     else:
         return "long time ago"
 
-offset = 0
-timezone = pytz.timezone("Europe/Kyiv")
 
-url = f'https://sef.podkolzin.consulting/api/users/lastSeen?offset={offset}'
+def get_user_data():
+    offset = 0
 
-response = requests.get(url)
+    url = f'https://sef.podkolzin.consulting/api/users/lastSeen?offset={offset}'
 
-if response.status_code == 200:
-    data = response.json()
-    users = data.get('data', [])
+    response = requests.get(url)
 
-    if users:
-        for user in users:
-            username = user.get('nickname', 'unknown user')
-            last_seen = user.get('lastSeenDate', None)
-            if last_seen:
-                time_of_visit = last_seen_task(last_seen)
-                print(f"{username} was online {time_of_visit}")
-            else:
-                print(f"{username} is online now")
+    if response.status_code == 200:
+        data = response.json()
+        users = data.get('data', [])
+
+        if users:
+            for user in users:
+                username = user.get('nickname', 'unknown user')
+                last_seen = user.get('lastSeenDate', None)
+                if last_seen:
+                    time_of_visit = last_seen_task(last_seen)
+                    print(f"{username} was online {time_of_visit}")
+                else:
+                    print(f"{username} is online now")
+        else:
+            print("User data not found in the API response")
     else:
-        print("User data not found in the API response")
-else:
-    print(f"Unable to retrieve data. Status code: {response.status_code}")
+        print(f"Unable to retrieve data. Status code: {response.status_code}")
+
+
+get_user_data()
 
 
 class TestLastSeenTask(unittest.TestCase):
-
     def test_last_seen_just_now(self):
         now = datetime.now(pytz.timezone("Europe/Kyiv"))
         thirty_seconds_ago = now - timedelta(seconds=30)
@@ -105,13 +111,6 @@ class TestLastSeenTask(unittest.TestCase):
 
         self.assertEqual(last_seen_task(ten_days_ago.isoformat()), "long time ago")
 
+
 if __name__ == '__main__':
     unittest.main()
-
-
-
-
-
-
-
-
