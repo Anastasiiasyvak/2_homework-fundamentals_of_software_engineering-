@@ -32,34 +32,44 @@ def last_seen_task(last_seen):
         return "long time ago"
 
 
-def get_user_data():
-    offset = 0
-
+def fetch_user_data(offset):
     url = f'https://sef.podkolzin.consulting/api/users/lastSeen?offset={offset}'
-
     response = requests.get(url)
 
     if response.status_code == 200:
         data = response.json()
-        users = data.get('data', [])
-
-        if users:
-            for user in users:
-                username = user.get('nickname', 'unknown user')
-                last_seen = user.get('lastSeenDate', None)
-                if last_seen:
-                    time_of_visit = last_seen_task(last_seen)
-                    print(f"{username} was online {time_of_visit}")
-                else:
-                    print(f"{username} is online now")
-        else:
-            print("User data not found in the API response")
+        return data.get('data', [])
     else:
-        print(f"Unable to retrieve data. Status code: {response.status_code}")
+        return []
+
+
+def get_user_data():
+    offset = 0
+    user_data = []
+
+    while True:
+        users = fetch_user_data(offset)
+
+        if not users:
+            break
+
+        user_data.extend(users)
+        offset += len(users)
+
+    return user_data
 
 
 def main():
-    get_user_data()
+    user_data = get_user_data()
+
+    for user in user_data:
+        username = user.get('nickname', 'unknown user')
+        last_seen = user.get('lastSeenDate', None)
+        if last_seen:
+            time_of_visit = last_seen_task(last_seen)
+            print(f"{username} was online {time_of_visit}")
+        else:
+            print(f"{username} now online")
 
 
 if __name__ == '__main__':

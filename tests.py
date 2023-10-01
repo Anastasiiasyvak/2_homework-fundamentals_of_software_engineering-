@@ -1,7 +1,8 @@
 import unittest
 from datetime import datetime, timedelta
 import pytz
-from main import last_seen_task
+from unittest.mock import patch, Mock
+from main import last_seen_task, get_user_data
 
 
 class TestLastSeenTask(unittest.TestCase):
@@ -52,6 +53,31 @@ class TestLastSeenTask(unittest.TestCase):
         ten_days_ago = now - timedelta(days=10)
 
         self.assertEqual(last_seen_task(ten_days_ago.isoformat()), "long time ago")
+
+
+class TestGetUserData(unittest.TestCase):
+    @patch('main.fetch_user_data')
+    def test_get_user_data_single_page(self, mock_fetch_user_data):
+        mock_response = {'data': [{'nickname': 'first_user', 'lastSeenDate': '2023-10-01T12:00:00Z'}]}
+        mock_fetch_user_data.side_effect = [mock_response, []]
+
+        user_data = get_user_data()
+
+        self.assertEqual(len(user_data), 1)
+        self.assertEqual(user_data[0]['nickname'], 'first_user')
+
+    @patch('main.fetch_user_data')
+    def test_get_user_data_multiple_pages(self, mock_fetch_user_data):
+        mock_response1 = {'data': [{'nickname': 'first_user', 'lastSeenDate': '2023-10-01T12:00:00Z'}]}
+        mock_response2 = {'data': [{'nickname': 'second_user', 'lastSeenDate': '2023-10-01T13:00:00Z'}]}
+        mock_response3 = {}
+        mock_fetch_user_data.side_effect = [mock_response1, mock_response2, mock_response3]
+
+        user_data = get_user_data()
+
+        self.assertEqual(len(user_data), 2)
+        self.assertEqual(user_data[0]['nickname'], 'first_user')
+        self.assertEqual(user_data[1]['nickname'], 'second_user')
 
 
 if __name__ == '__main__':
