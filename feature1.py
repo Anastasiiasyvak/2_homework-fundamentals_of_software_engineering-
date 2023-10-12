@@ -4,7 +4,6 @@ import requests
 
 app = FastAPI()
 
-
 def fetch_user_data(offset):
     url = f'https://sef.podkolzin.consulting/api/users/lastSeen?offset={offset}'
     response = requests.get(url)
@@ -14,7 +13,6 @@ def fetch_user_data(offset):
         return data.get('data', [])
     else:
         return []
-
 
 def feature1(date):
     user_data = fetch_user_data(0)
@@ -28,7 +26,7 @@ def feature1(date):
 
             if last_seen_date <= date:
                 historical_data.append({
-                    'user_id': user.get('user_id'),
+                    'user_id': user.get('userId'),
                     'last_seen_date': last_seen_date
                 })
 
@@ -38,7 +36,6 @@ def feature1(date):
     print(f"Total Users: {total_users_count}")
 
     return {'usersOnline': len(historical_data), 'historicalData': historical_data}
-
 
 def feature2(date, user_id):
     user_data = fetch_user_data(0)
@@ -80,6 +77,30 @@ def feature2(date, user_id):
 
         return {'wasUserOnline': was_user_online, 'nearestOnlineTime': nearest_online_time}
 
+def feature3(date):
+    user_data = fetch_user_data(0)
+
+    online_users_count = 0
+    online_users_records = 0
+
+    for user in user_data:
+        last_seen = user.get('lastSeenDate', None)
+        if last_seen:
+            last_seen = last_seen.split('.')[0]
+            last_seen_date = datetime.strptime(last_seen, "%Y-%m-%dT%H:%M:%S")
+
+            if last_seen_date.weekday() == date.weekday() and last_seen_date.hour == date.hour:
+                online_users_count += 1
+                online_users_records += 1
+
+    if online_users_records > 0:
+        average_online_users = online_users_count / online_users_records
+    else:
+        average_online_users = 0
+
+    print(f"Predicted online users at {date}: {int(average_online_users)}")
+
+    return {'onlineUsers': int(average_online_users)}
 
 @app.get('/')
 async def root(date: datetime = Query(..., description="Requested date and time")):
@@ -95,7 +116,7 @@ async def root(date: datetime = Query(..., description="Requested date and time"
 
             if last_seen_date <= date:
                 historical_data.append({
-                    'user_id': user.get('user_id'),
+                    'user_id': user.get('userId'),
                     'last_seen_date': last_seen_date
                 })
 
@@ -111,10 +132,9 @@ async def root(date: datetime = Query(..., description="Requested date and time"
         'totalUsers': total_users_count
     }
 
-
 @app.get('/api/stats')
 async def choose_feature(date: datetime = Query(..., description="Requested date and time")):
-    print("Which feature would you like to execute? (feature1/feature2)")
+    print("Which feature would you like to execute? (feature1/feature2/feature3)")
     chosen_feature = input()
     if chosen_feature == 'feature1':
         return feature1(date)
@@ -122,6 +142,8 @@ async def choose_feature(date: datetime = Query(..., description="Requested date
         print("Please enter user_id:")
         user_id = input()
         return feature2(date, user_id)
+    elif chosen_feature == 'feature3':
+        return feature3(date)
     else:
         return {'error': 'Invalid feature name'}
 
