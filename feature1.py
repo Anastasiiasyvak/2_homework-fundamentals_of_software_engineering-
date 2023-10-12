@@ -14,6 +14,25 @@ def fetch_user_data(offset):
     else:
         return []
 
+def get_user_historical_data(user_id, date):
+    user_data = fetch_user_data(0)
+    user_historical_data = []
+
+    for user in user_data:
+        if user.get('userId') == user_id:
+            last_seen = user.get('lastSeenDate', None)
+            if last_seen:
+                last_seen = last_seen.split('.')[0]
+                last_seen_date = datetime.strptime(last_seen, "%Y-%m-%dT%H:%M:%S")
+
+                if last_seen_date <= date:
+                    user_historical_data.append({
+                        'user_id': user.get('userId'),
+                        'last_seen_date': last_seen_date
+                    })
+
+    return user_historical_data
+
 def feature1(date):
     user_data = fetch_user_data(0)
     historical_data = []
@@ -102,6 +121,27 @@ def feature3(date):
 
     return {'onlineUsers': int(average_online_users)}
 
+
+def feature4(date, userId):
+    user_historical_data = get_user_historical_data(userId, date)
+    total_weeks = len(user_historical_data)
+
+    if total_weeks == 0:
+        online_chance = 0
+    else:
+        online_chance = len(user_historical_data) / total_weeks
+
+    will_be_online = online_chance > 0.85
+
+    print(f"User {userId} online chance on {date}: {online_chance}")
+    print(f"User {userId} will be online on {date}: {will_be_online}")
+
+    return {
+        "willBeOnline": will_be_online,
+        "onlineChance": online_chance
+    }
+
+
 @app.get('/')
 async def root(date: datetime = Query(..., description="Requested date and time")):
     user_data = fetch_user_data(0)
@@ -134,7 +174,7 @@ async def root(date: datetime = Query(..., description="Requested date and time"
 
 @app.get('/api/stats')
 async def choose_feature(date: datetime = Query(..., description="Requested date and time")):
-    print("Which feature would you like to execute? (feature1/feature2/feature3)")
+    print("Which feature would you like to execute? (feature1/feature2/feature3/feature4)")
     chosen_feature = input()
     if chosen_feature == 'feature1':
         return feature1(date)
@@ -144,6 +184,10 @@ async def choose_feature(date: datetime = Query(..., description="Requested date
         return feature2(date, user_id)
     elif chosen_feature == 'feature3':
         return feature3(date)
+    elif chosen_feature == 'feature4':
+        print("Please enter user_id:")
+        user_id = input()
+        return feature4(date, user_id)
     else:
         return {'error': 'Invalid feature name'}
 
