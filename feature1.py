@@ -194,3 +194,6 @@ async def choose_feature(date: datetime = Query(..., description="Requested date
 if __name__ == '__main__':
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
+#  curl -X GET "http://0.0.0.0:8000/api/stats?date=2023-09-27T20:00"
