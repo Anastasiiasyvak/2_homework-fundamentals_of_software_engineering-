@@ -63,3 +63,39 @@ def test_preduction_mechanism_on_historical_data_concrete_user_integration():
     will_be_online = data["willBeOnline"]
 
     assert isinstance(will_be_online, bool)
+
+
+def test_edge_case_lower_date_limit():
+    date = datetime(2000, 1, 1, 0, 0)
+    response = client.get(f"/api/stats/users?date={date}")
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert "usersOnline" in data
+    users_online = data["usersOnline"]
+
+    assert isinstance(users_online, int)
+    assert users_online >= 0
+
+
+def test_invalid_future_date():
+    date = datetime(2030, 1, 1, 0, 0)
+    response = client.get(f"/api/stats/users?date={date}")
+
+    assert response.status_code == 400
+
+
+def test_no_data_scenario():
+    date = datetime(2023, 9, 27, 20, 0)
+
+    response = client.get(f"/api/stats/users?date={date}")
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert "usersOnline" in data
+    users_online = data["usersOnline"]
+
+    assert isinstance(users_online, int)
+    assert users_online == 0
