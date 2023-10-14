@@ -33,7 +33,7 @@ def get_user_historical_data(user_id, date):
 
     return user_historical_data
 
-def feature1(date):
+def Historical_data_for_all_users(date):
     user_data = fetch_user_data(0)
     historical_data = []
 
@@ -56,7 +56,7 @@ def feature1(date):
 
     return {'usersOnline': len(historical_data), 'historicalData': historical_data}
 
-def feature2(date, user_id):
+def historical_data_for_concrete_user(date, user_id):
     user_data = fetch_user_data(0)
 
     found_user = None
@@ -96,7 +96,7 @@ def feature2(date, user_id):
 
         return {'wasUserOnline': was_user_online, 'nearestOnlineTime': nearest_online_time}
 
-def feature3(date):
+def prediction_mechanism_for_users_count(date):
     user_data = fetch_user_data(0)
 
     online_users_count = 0
@@ -122,7 +122,7 @@ def feature3(date):
     return {'onlineUsers': int(average_online_users)}
 
 
-def feature4(date, userId):
+def prediction_mechanish_for_concrete_user(date, userId):
     user_historical_data = get_user_historical_data(userId, date)
     total_weeks = len(user_historical_data)
 
@@ -177,17 +177,17 @@ async def choose_feature(date: datetime = Query(..., description="Requested date
     print("Which feature would you like to execute? (feature1/feature2/feature3/feature4)")
     chosen_feature = input()
     if chosen_feature == 'feature1':
-        return feature1(date)
+        return Historical_data_for_all_users(date)
     elif chosen_feature == 'feature2':
         print("Please enter user_id:")
         user_id = input()
-        return feature2(date, user_id)
+        return historical_data_for_concrete_user(date, user_id)
     elif chosen_feature == 'feature3':
-        return feature3(date)
+        return prediction_mechanism_for_users_count(date)
     elif chosen_feature == 'feature4':
         print("Please enter user_id:")
         user_id = input()
-        return feature4(date, user_id)
+        return prediction_mechanish_for_concrete_user(date, user_id)
     else:
         return {'error': 'Invalid feature name'}
 
