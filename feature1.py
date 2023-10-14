@@ -1,8 +1,5 @@
-from fastapi import FastAPI, Query
 from datetime import datetime
 import requests
-
-app = FastAPI()
 
 def fetch_user_data(offset):
     url = f'https://sef.podkolzin.consulting/api/users/lastSeen?offset={offset}'
@@ -121,7 +118,6 @@ def prediction_mechanism_for_users_count(date):
 
     return {'onlineUsers': int(average_online_users)}
 
-
 def prediction_mechanish_for_concrete_user(date, userId):
     user_historical_data = get_user_historical_data(userId, date)
     total_weeks = len(user_historical_data)
@@ -141,6 +137,9 @@ def prediction_mechanish_for_concrete_user(date, userId):
         "onlineChance": online_chance
     }
 
+from fastapi import FastAPI, Query
+
+app = FastAPI()
 
 @app.get('/')
 async def root(date: datetime = Query(..., description="Requested date and time")):
@@ -194,6 +193,5 @@ async def choose_feature(date: datetime = Query(..., description="Requested date
 if __name__ == '__main__':
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
 
 #  curl -X GET "http://0.0.0.0:8000/api/stats?date=2023-09-27T20:00"
