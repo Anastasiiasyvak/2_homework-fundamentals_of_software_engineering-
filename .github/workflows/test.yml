@@ -21,11 +21,13 @@ jobs:
     - name: Install dependencies
       run: pip install -r requirements.txt
 
-    - name: Run unit tests
-      run: pytest tests/unit
+    - name: Run unit tests for reports
+      run: pytest test_reports
 
-    - name: Run integration tests
-      run: pytest tests/integration
+    - name: Run unit tests for main
+      run: pytest test_main
 
-    - name: Run E2E tests
-      run: pytest tests/e2e
+    - name: Run unit tests for users
+      run: pytest test_users
+
+
