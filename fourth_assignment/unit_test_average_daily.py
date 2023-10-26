@@ -8,6 +8,8 @@ def test_calculate_average_online_time_user_online():
     assert weekly_average > 0
     assert daily_average > 0
 
+
+
 def test_calculate_average_online_time_user_never_online():
     user_id = "e1f2d509-a0c9-f79a-177a-7252e4d72a70"
 
