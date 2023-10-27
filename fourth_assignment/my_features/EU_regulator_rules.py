@@ -12,8 +12,7 @@ def fetch_user_data(offset):
         return data.get('data', [])
     else:
         return []
-
-@app.post("/api/user/forget")
+@app.post("/api/user/forget/{user_id}")
 async def forget_user(user_id: str):
     user_data = fetch_user_data(0)
 
@@ -26,10 +25,8 @@ async def forget_user(user_id: str):
 
     if user_found:
         response_message = f"User {user_id} data has been deleted as per GDPR regulations."
-        print(f"User {user_id} data has been deleted.")
     else:
         response_message = f"User {user_id} not found."
-        print(f"User {user_id} not found.")
 
     return {"userId": user_id, "message": response_message}
 

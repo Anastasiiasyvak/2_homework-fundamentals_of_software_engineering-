@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 import requests
 from datetime import datetime
 
@@ -13,17 +13,8 @@ def fetch_user_data(offset):
         return data.get('data', [])
     else:
         return []
-
-@app.get("/api/stats/user/total")
-async def get_total_online_time(user_id: str):
-    total_time = calculate_total_online_time(user_id)
-
-    print(f"Total time for user {user_id}: {total_time} seconds")
-
-    return {"totalTime": total_time}
-
-def calculate_total_online_time(user_id: str):
-    user_data = fetch_user_data(0)
+def calculate_total_online_time(user_id: str, offset: int = Query(0, description="Offset for fetching user data")):
+    user_data = fetch_user_data(offset)
 
     total_time = 0
 
@@ -39,6 +30,8 @@ def calculate_total_online_time(user_id: str):
 
     return total_time
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+@app.get("/api/stats/user/total")
+async def get_total_online_time(user_id: str, offset: int = Query(0, description="Offset for fetching user data")):
+    total_time = calculate_total_online_time(user_id, offset)
+
+    return {"totalTime": total_time}
