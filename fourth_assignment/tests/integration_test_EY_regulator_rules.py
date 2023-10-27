@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from EU_regulator_rules import app
+from fourth_assignment.my_features.EU_regulator_rules import app
 
 client = TestClient(app)
 

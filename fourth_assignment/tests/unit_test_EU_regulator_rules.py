@@ -1,6 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
-from EU_regulator_rules import app, fetch_user_data
+from fourth_assignment.my_features.EU_regulator_rules import app, fetch_user_data
 
 client = TestClient(app)
 

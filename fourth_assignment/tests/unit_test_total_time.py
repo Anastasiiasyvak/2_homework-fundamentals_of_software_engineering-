@@ -1,4 +1,4 @@
-from total_time_was_user_online import calculate_total_online_time
+from fourth_assignment.my_features.total_time_was_user_online import calculate_total_online_time
 
 def test_total_online_time_user_online():
     user_id = "4c9314d8-75cc-24e6-4443-172c2b0b3f87"  # існуючий user id

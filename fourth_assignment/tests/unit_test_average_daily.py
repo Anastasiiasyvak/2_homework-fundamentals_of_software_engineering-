@@ -1,4 +1,4 @@
-from average_daily_time import calculate_average_online_time
+from fourth_assignment.my_features.average_daily_time import calculate_average_online_time
 
 def test_calculate_average_online_time_user_online():
     user_id = "4c9314d8-75cc-24e6-4443-172c2b0b3f87"
