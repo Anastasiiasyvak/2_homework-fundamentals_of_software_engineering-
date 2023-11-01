@@ -1,6 +1,5 @@
 from fastapi import FastAPI, HTTPException
 from typing import List, Dict, Optional
-from datetime import datetime
 import requests
 
 app = FastAPI()
