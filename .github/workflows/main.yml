@@ -36,3 +36,10 @@ jobs:
         coverage run -m pytest /home/nastia/PycharmProjects/2_homework(fundamentals_of_software_engineering)
         coverage report
       continue-on-error: true
+
+
+    -   name: Check code formatting
+        run: |
+            pip install editorconfig-checker
+            editorconfig-checker
+        continue-on-error: true
