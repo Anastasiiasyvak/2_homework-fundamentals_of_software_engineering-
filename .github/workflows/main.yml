@@ -1,0 +1,37 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.10
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Lint code
+      run: |
+        pip install flake8 pylint
+        flake8 . --ignore=E203,E266,E501,W503
+        pylint .
+      continue-on-error: true
+
+    - name: Run tests
+      run: |
+        pip install pytest coverage
+        pytest /home/nastia/PycharmProjects/2_homework(fundamentals_of_software_engineering)
+        coverage run -m pytest /home/nastia/PycharmProjects/2_homework(fundamentals_of_software_engineering)
+        coverage report
+      continue-on-error: true
