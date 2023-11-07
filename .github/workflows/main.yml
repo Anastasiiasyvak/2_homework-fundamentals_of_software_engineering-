@@ -29,6 +29,9 @@ jobs:
         pylint .
       continue-on-error: true
 
+    -   name: Install pytest  
+        run: pip install pytest
+
     - name: Run tests
       run: |
         pip install pytest coverage
