@@ -1,5 +1,6 @@
 requests==2.26.0
 numpy==1.21.0
 flask==2.0.1
+pytest==6.2.5
 types-requests
 types-pytz

@@ -29,11 +29,14 @@ jobs:
         pylint .
       continue-on-error: true
 
+    -   name: Install pytest
+        run: pip install pytest
+
     - name: Run tests
       run: |
         pip install pytest coverage
-        pytest /home/nastia/PycharmProjects/2_homework(fundamentals_of_software_engineering)
-        coverage run -m pytest /home/nastia/PycharmProjects/2_homework(fundamentals_of_software_engineering)
+        pytest
+        coverage run -m pytest
         coverage report
       continue-on-error: true
 
