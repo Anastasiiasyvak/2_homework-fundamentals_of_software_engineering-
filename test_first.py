@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import pytz
 from unittest.mock import patch, Mock
 from main import last_seen_task, get_user_data
-
+import pytest
 
 class TestLastSeenTask(unittest.TestCase):
     def test_last_seen_just_now(self):
