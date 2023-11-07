@@ -1,6 +1,6 @@
 from datetime import datetime
 from fastapi.testclient import TestClient
-from feature1 import app
+from main import app
 
 client = TestClient(app)
 
