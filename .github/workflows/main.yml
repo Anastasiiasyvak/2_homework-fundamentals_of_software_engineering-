@@ -43,3 +43,9 @@ jobs:
             pip install editorconfig-checker
             editorconfig-checker
         continue-on-error: true
+
+    -   name: Type checking with mypy
+        run: |
+            pip install mypy
+            mypy
+        continue-on-error: true
